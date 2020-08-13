@@ -1,5 +1,181 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Machine, interpret } from "xstate";
+import { Machine, interpret, assign } from "xstate";
+
+const todoMachine = Machine({
+  initial: "select",
+  context: {
+    todos: {
+      formulary: {
+        task: "machine",
+      },
+      list: [
+        { id: 1, value: "task 1", complete: false },
+        { id: 2, value: "task 2", complete: false },
+        { id: 3, value: "task 3", complete: false },
+        { id: 4, value: "task 4", complete: false },
+      ],
+      oldList: [
+        { id: 1, value: "task 1", complete: false },
+        { id: 2, value: "task 2", complete: false },
+        { id: 3, value: "task 3", complete: false },
+        { id: 4, value: "task 4", complete: false },
+      ],
+    },
+  },
+  states: {
+    select: {
+      invoke: {
+        id: "updatelist",
+        src: (ctx, event) => {
+          console.log("atualizei");
+          console.log(ctx);
+        },
+      },
+      on: {
+        CHANGE: [
+          {
+            target: "change",
+            cond: (ctx, event) => {
+              return event.task !== "";
+            },
+          },
+        ],
+        SELECT: [
+          {
+            target: "update",
+            cond: (ctx, event) => {
+              return event.task !== "";
+            },
+          },
+        ],
+        ADD: [
+          {
+            target: "add",
+            cond: (ctx, event) => {
+              return event.task !== "";
+            },
+          },
+        ],
+        ACTIVE: [
+          {
+            target: "active",
+            cond: (ctx, event) => {
+              return event.type !== "";
+            },
+          },
+        ],
+        ALL: [
+          {
+            target: "all",
+            cond: (ctx, event) => {
+              return event.type !== "";
+            },
+          },
+        ],
+        COMPLETE: [
+          {
+            target: "complete",
+            cond: (ctx, event) => {
+              return event.type !== "";
+            },
+          },
+        ],
+      },
+    },
+    all: {
+      // all
+      invoke: {
+        id: "listall",
+        src: (ctx, event) => listAll(ctx, event),
+        onDone: {
+          target: "select",
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+    },
+    active: {
+      // actives
+      invoke: {
+        id: "listactive",
+        src: (ctx, event) => listActive(ctx, event),
+        onDone: {
+          target: "select",
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+    },
+    complete: {
+      // completes
+      invoke: {
+        id: "listcomplete",
+        src: (ctx, event) => listComplete(ctx, event),
+        onDone: {
+          target: "select",
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+    },
+    change: {
+      invoke: {
+        id: "changetodo",
+        src: (ctx, event) => changeTodo(ctx, event),
+        onDone: {
+          target: "select",
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+    },
+    update: {
+      invoke: {
+        id: "updatetodo",
+        src: (ctx, event) => updateTodo(ctx, event),
+        onDone: {
+          target: "select",
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+    },
+    add: {
+      invoke: {
+        id: "addtodo",
+        src: (ctx, event) => addTodo(ctx, event),
+        onDone: {
+          target: "select",
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+    },
+  },
+});
+
+const style = {
+  color: "#0202028a",
+  textDecoration: "line-through",
+};
 
 const useMachine = (machine) => {
   const [current, setCurrent] = useState(machine.initialState);
@@ -23,52 +199,121 @@ const useMachine = (machine) => {
   return [current, service.send];
 };
 
-const todoMachine = Machine({
-  initial: "all",
-  states: {
-    all: {
-      // all
+const changeTodo = (ctx, event) => {
+  const data = {
+    ...ctx.todos,
+    formulary: { task: event.todo },
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+const addTodo = (ctx, event) => {
+  const currentList = [
+    ...ctx.todos.list,
+    {
+      id: event.data.todo.id,
+      value: event.data.todo.value,
+      complete: false,
     },
-    active: {
-      // actives
-    },
-    complete: {
-      // completes
-    },
-  },
-});
+  ];
+
+  const data = {
+    ...ctx.todos,
+    formulary: { task: event.data.task },
+    list: currentList,
+    oldList: currentList,
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+const updateTodo = (ctx, event) => {
+  const currentList = ctx.todos.list.map((m) => {
+    let aux = m;
+    if (parseInt(event.todo.id) === m.id) {
+      if (event.todo.event.target.checked)
+        aux = { ...m, styled: style, complete: true };
+
+      if (!event.todo.event.target.checked)
+        aux = { ...m, styled: {}, complete: false };
+    }
+    return aux;
+  });
+
+  const data = {
+    ...ctx.todos,
+    list: currentList,
+    oldList: currentList,
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+const listActive = (ctx, event) => {
+  const data = {
+    ...ctx.todos,
+    list: ctx.todos.oldList.filter((f) => !f.complete),
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+const listAll = (ctx, event) => {
+  const data = {
+    ...ctx.todos,
+    list: ctx.todos.oldList,
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+const listComplete = (ctx, event) => {
+  const data = {
+    ...ctx.todos,
+    list: ctx.todos.oldList.filter((f) => f.complete),
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
 
 const Todos = () => {
   const [machine, send] = useMachine(todoMachine);
-  const [todos, setTodos] = useState({
-    formulary: {
-      task: "teste",
-    },
-    list: [
-      { id: 1, value: "task 1", complete: false },
-      { id: 2, value: "task 2", complete: false },
-      { id: 3, value: "task 3", complete: false },
-      { id: 4, value: "task 4", complete: false },
-    ],
-  });
+  const todos = machine.context.todos;
 
-  console.log(todos.formulary);
+  console.log("State = ", machine.value);
+  console.log(todos.list, todos.oldList);
 
   return (
     <div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const formulary = [
-            ...todos.list,
-            {
-              id: Math.floor(Math.random() * 1000 + 1),
-              value: e.target.value,
-              complete: false,
+          const formulary = {
+            type: "ADD",
+            data: {
+              task: "",
+              todo: {
+                id: Math.floor(Math.random() * 1000 + 1),
+                value: todos.formulary.task,
+                complete: false,
+              },
             },
-          ];
+          };
 
-          setTodos(formulary);
+          send(formulary);
         }}
       >
         <input
@@ -77,12 +322,7 @@ const Todos = () => {
           name="todo"
           placeholder="Task here"
           value={todos.formulary.task}
-          onChange={(e) =>
-            setTodos({
-              ...todos,
-              formulary: { task: e.target.value },
-            })
-          }
+          onChange={(e) => send({ type: "CHANGE", todo: e.target.value })}
         ></input>
         <button type="submit">save</button>
       </form>
@@ -95,20 +335,31 @@ const Todos = () => {
               id={t.id}
               name="register"
               value={t.value}
-              onChange={(e) => this.props.change(e)}
+              onChange={(e) => {
+                send({
+                  type: "SELECT",
+                  todo: {
+                    id: t.id,
+                    value: t.value,
+                    complete: true,
+                    styled: style,
+                    event: e,
+                  },
+                });
+              }}
               checked={t.complete}
             />
             {t.value}
           </li>
         ))}
 
-      <button type="button" onClick={{}}>
+      <button type="button" onClick={() => send({ type: "ALL" })}>
         All
       </button>
-      <button type="button" onClick={{}}>
+      <button type="button" onClick={() => send({ type: "ACTIVE" })}>
         Active
       </button>
-      <button type="button" onClick={{}}>
+      <button type="button" onClick={() => send({ type: "COMPLETE" })}>
         Complete
       </button>
     </div>
