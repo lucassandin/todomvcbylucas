@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import Todos from "../components/todos";
 import Footer from "../components/footer";
 import "../style/main.css";
+import "./style.css";
 
 class Home extends Component {
   constructor(props) {
@@ -12,7 +13,8 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <div className="">
+        <h1>Todos</h1>
         <Todos />
 
         <Footer />

@@ -1,10 +1,11 @@
 import React from "react";
 import {
   todoMachine,
-  style,
   useMachine,
   updatetodo,
+  countedItens,
 } from "../../config/machine";
+import Todo from "../todo";
 import "./style.css";
 
 const Todos = () => {
@@ -32,24 +33,12 @@ const Todos = () => {
           send(formulary);
         }}
       >
-        <label onClick={() => send({ type: "SELECT_ALL" })}>
-          <svg
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="chevron-down w-6 h-6"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
-        </label>
         <input
           type="text"
           id="todo"
           name="todo"
           placeholder="Task here"
+          className="todo"
           value={machine.context.todos.formulary.task}
           onChange={(e) => {
             send({
@@ -60,47 +49,42 @@ const Todos = () => {
             });
           }}
         ></input>
-        <button type="submit">save</button>
+        <label onClick={() => send({ type: "SELECT_ALL" })}>
+          <svg
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="chevron-down w-6 h-6 selectAll"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        </label>
       </form>
 
-      {updatetodo(machine) &&
-        updatetodo(machine).map((t) => (
-          <li key={t.id} style={t.styled}>
-            <input
-              type="checkbox"
-              id={t.id}
-              name="register"
-              value={t.value}
-              onChange={(e) => {
-                send({
-                  type: "INITIAL",
-                  todos: {
-                    formulary: { task: machine.context.todos.task },
-                    todo: {
-                      id: t.id,
-                      value: t.value,
-                      complete: true,
-                      styled: style,
-                    },
-                    event: e,
-                  },
-                });
-              }}
-              checked={t.complete}
-            />
-            {t.value}
-          </li>
-        ))}
+      <Todo machine={machine} send={send} />
 
-      <button type="button" onClick={() => send({ type: "ALL" })}>
-        All
-      </button>
-      <button type="button" onClick={() => send({ type: "ACTIVE" })}>
-        Active
-      </button>
-      <button type="button" onClick={() => send({ type: "COMPLETE" })}>
-        Complete
-      </button>
+      <div className="buttons">
+        <div className="counted">
+          <label>{countedItens(machine)} item left</label>
+        </div>
+        <button type="button" onClick={() => send({ type: "ALL" })}>
+          All
+        </button>
+        <button type="button" onClick={() => send({ type: "ACTIVE" })}>
+          Active
+        </button>
+        <button type="button" onClick={() => send({ type: "COMPLETE" })}>
+          Complete
+        </button>
+        <div className="allCompleted">
+          <button type="button" onClick={() => send({ type: "COMPLETE" })}>
+            Clear completed
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,46 @@
+.todos {
+  background-color: #fff;
+}
+
+.todo {
+  background-color: #33333312;
+  padding: 20px 10px 20px 60px;
+  box-shadow: 0px 0px 3px 0px #00000069;
+  width: 700px;
+  font-size: 15px;
+  color: #00000094;
+}
+
+.selectAll {
+  position: relative;
+  top: -2.5em;
+  left: 1em;
+  color: #0000007d;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 0px 1px 1px 0px #00000066;
+  padding: 15px;
+}
+
+button[type="button"] {
+  background-color: #f1f1f1;
+  border: 1px solid #00000012;
+  padding: 1px 20px;
+  margin: 10px;
+}
+
+.allCompleted {
+  position: relative;
+  right: -1em;
+}
+
+.counted {
+  position: relative;
+  left: -8em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

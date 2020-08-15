@@ -1,0 +1,40 @@
+ul {
+  display: block;
+}
+ul li {
+  display: flex;
+  align-items: center;
+  padding: 20px 0 0 15px;
+  box-shadow: 0px 1px 1px 0px #00000066;
+  padding: 15px;
+
+  /* rounded */
+  /* border-radius: 50%;
+  width: 1.3em;
+  height: 1.3em;
+  box-shadow: 0px 0px 3px 0px #00000069;
+  margin: 20px; */
+}
+
+ul li label {
+  padding: 0 15px;
+}
+
+input[type="checkbox"] {
+  width: 28px;
+  height: 28px;
+  border-radius: 50px;
+  box-shadow: 0px 0px 3px 0px #00000069;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+input[type="checkbox"]:checked + label {
+  text-decoration: line-through;
+}
+
+.trash {
+  position: absolute;
+  color: red;
+}

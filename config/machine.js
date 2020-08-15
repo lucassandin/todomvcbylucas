@@ -6,13 +6,13 @@ export const todoMachine = Machine({
   context: {
     todos: {
       formulary: {
-        task: "machine",
+        task: "",
       },
       todo: [
-        { id: 1, value: "task 1", complete: false },
-        { id: 2, value: "task 2", complete: false },
-        { id: 3, value: "task 3", complete: false },
-        { id: 4, value: "task 4", complete: false },
+        { id: 1, value: "aaaaaaaaaaaaaaaaaaaaa 1", complete: false },
+        { id: 2, value: "bbbbbbbbbbbbbbbb 2", complete: false },
+        { id: 3, value: "cccccccccccccccccccccccc 3", complete: false },
+        { id: 4, value: "dddddddddddddddddddd 4", complete: false },
       ],
     },
   },
@@ -120,11 +120,6 @@ export const todoMachine = Machine({
   },
 });
 
-export const style = {
-  color: "#0202028a",
-  textDecoration: "line-through",
-};
-
 export const useMachine = (machine) => {
   const [current, setCurrent] = useState(machine.initialState);
 
@@ -151,11 +146,9 @@ const updateTodo = (ctx, event) => {
   const currenttodo = ctx.todos.todo.map((m) => {
     let aux = m;
     if (parseInt(event.todos.todo.id) === m.id) {
-      if (event.todos.event.target.checked)
-        aux = { ...m, styled: style, complete: true };
+      if (event.todos.event.target.checked) aux = { ...m, complete: true };
 
-      if (!event.todos.event.target.checked)
-        aux = { ...m, styled: {}, complete: false };
+      if (!event.todos.event.target.checked) aux = { ...m, complete: false };
     }
     return aux;
   });
@@ -259,4 +252,9 @@ export const updatetodo = (machine) => {
     default:
       return machine.context.todos.todo;
   }
+};
+
+export const countedItens = (machine) => {
+  const count = machine.context.todos.todo.filter((m) => m.complete);
+  return count.length;
 };
