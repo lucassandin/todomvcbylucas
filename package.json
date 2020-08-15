@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@zeit/next-css": "^1.0.1",
     "next": "^9.5.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -13,7 +14,8 @@
     "xstate": "^4.11.0"
   },
   "scripts": {
-    "next:dev": "next dev",
+    "build:css": "postcss style/global.css -o style/main.css",
+    "next:dev": "yarn build:css && next dev",
     "next:start": "next start",
     "next:build": "next build",
     "start": "react-scripts start",
@@ -35,5 +37,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.8.6",
+    "postcss-cli": "^7.1.1",
+    "tailwindcss": "^1.6.2"
   }
 }
