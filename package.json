@@ -5,7 +5,7 @@
   "author":"Lucas Sandin",
   "license":"MIT",
   "engines": {
-      "node": "14.6.0"
+      "node": "14.x"
    },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
