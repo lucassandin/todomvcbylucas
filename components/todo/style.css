@@ -34,29 +34,9 @@ input[type="checkbox"]:checked + label {
   text-decoration: line-through;
 }
 
-/* Flex Container */
-.container {
-  max-width: 420px;
-  margin: 0 auto;
-  display: flex;
-  border: 1px solid #ccc;
-}
-
-.space-between {
-  justify-content: space-between;
-}
-
-.item {
-  margin: 5px;
-  padding: 0 10px;
-  background: tomato;
-  text-align: center;
-  font-size: 1.5em;
-}
-
 ul li {
   position: relative;
-  font-size: 24px;
+  font-size: 15px;
   border-bottom: 1px solid #ededed;
 }
 
