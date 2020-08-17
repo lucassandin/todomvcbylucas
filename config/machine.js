@@ -5,6 +5,7 @@ export const todoMachine = Machine({
   initial: "initial",
   context: {
     todos: {
+      allselected: false,
       formulary: {
         task: "",
       },
@@ -54,6 +55,11 @@ export const todoMachine = Machine({
         SELECT_ALL: [
           {
             target: "selectall",
+          },
+        ],
+        CLEAR_COMPLETE: [
+          {
+            target: "clearcomplete",
           },
         ],
       },
@@ -107,6 +113,20 @@ export const todoMachine = Machine({
       invoke: {
         id: "selectall",
         src: (ctx, event) => selectAllTodo(ctx, event),
+        onDone: {
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+          target: "initial",
+        },
+      },
+    },
+    clearcomplete: {
+      invoke: {
+        id: "clearcomplete",
+        src: (ctx, event) => clearComple(ctx, event),
         onDone: {
           actions: assign({
             todos: (ctx, event) => {
@@ -229,11 +249,32 @@ const todoComplete = (ctx, event) => {
 };
 
 const selectAllTodo = (ctx, event) => {
+  const alter = ctx.todos.allselected ? false : true;
   const data = {
     ...ctx.todos,
+    allselected: alter,
     todo: ctx.todos.todo.map((m) => {
-      return [{ ...m, complete: true }];
+      return { ...m, complete: alter };
     }),
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+const clearComple = (ctx, event) => {
+  const data = {
+    ...ctx.todos,
+    todo: ctx.todos.todo.reduce((prev, item, i, array) => {
+      if (!array[i].complete) {
+        prev.push({
+          ...item,
+        });
+      }
+
+      return prev;
+    }, []),
   };
 
   return new Promise((resolve, reject) => {

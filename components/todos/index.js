@@ -80,7 +80,10 @@ const Todos = () => {
           Complete
         </button>
         <div className="allCompleted">
-          <button type="button" onClick={() => send({ type: "COMPLETE" })}>
+          <button
+            type="button"
+            onClick={() => send({ type: "CLEAR_COMPLETE" })}
+          >
             Clear completed
           </button>
         </div>
