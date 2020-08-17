@@ -2,6 +2,10 @@
   background-color: #fff;
 }
 
+.todos form {
+  position: relative;
+}
+
 .todo {
   background-color: #33333312;
   padding: 20px 10px 20px 60px;
@@ -12,8 +16,8 @@
 }
 
 .selectAll {
-  position: relative;
-  top: -2.5em;
+  position: absolute;
+  top: 1.5em;
   left: 1em;
   color: #0000007d;
 }

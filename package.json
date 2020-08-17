@@ -2,11 +2,11 @@
   "name": "todomvccopy",
   "version": "0.1.0",
   "description": "Example todomvc",
-  "author":"Lucas Sandin",
-  "license":"MIT",
+  "author": "Lucas Sandin",
+  "license": "MIT",
   "engines": {
-      "node": "12.x"
-   },
+    "node": "12.x"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
