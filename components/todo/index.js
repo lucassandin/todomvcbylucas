@@ -1,13 +1,13 @@
 import React from "react";
-import { updatetodo } from "../../config/machine";
+import { updatetodoList } from "../../config/machine";
 import "./style.css";
 
 const Todo = ({ machine, send }) => {
   return (
     <div className="">
       <ul>
-        {updatetodo(machine) &&
-          updatetodo(machine).map((t) => (
+        {updatetodoList(machine) &&
+          updatetodoList(machine).map((t) => (
             <li key={t.id}>
               <input
                 type="checkbox"
@@ -35,6 +35,19 @@ const Todo = ({ machine, send }) => {
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 className="x w-6 h-6 trash"
+                onClick={() =>
+                  send({
+                    type: "DELETE",
+                    todos: {
+                      formulary: { task: machine.context.todos.task },
+                      todo: {
+                        id: t.id,
+                        value: t.value,
+                        complete: true,
+                      },
+                    },
+                  })
+                }
               >
                 <path
                   fillRule="evenodd"

@@ -1,144 +1,5 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { Machine, interpret, assign, spawn, send } from "xstate";
-
-export const todoMachine = Machine({
-  initial: "initial",
-  context: {
-    todos: {
-      allselected: false,
-      formulary: {
-        task: "",
-      },
-      todo: [
-        { id: 1, value: "Task 1", complete: false },
-        { id: 2, value: "Task 2", complete: false },
-        { id: 3, value: "Task 3", complete: false },
-        { id: 4, value: "Task 4", complete: false },
-      ],
-    },
-  },
-  states: {
-    initial: {
-      on: {
-        INITIAL: [
-          {
-            target: "update",
-          },
-        ],
-        CHANGE: [
-          {
-            target: "change",
-            cond: (ctx, event) => event.todos.formulary.task !== "",
-          },
-        ],
-        ADD: [
-          {
-            target: "add",
-            cond: (ctx, event) => event.todos.formulary.task !== "",
-          },
-        ],
-        ALL: [
-          {
-            target: "all",
-          },
-        ],
-        ACTIVE: [
-          {
-            target: "active",
-          },
-        ],
-        COMPLETE: [
-          {
-            target: "complete",
-          },
-        ],
-        SELECT_ALL: [
-          {
-            target: "selectall",
-          },
-        ],
-        CLEAR_COMPLETE: [
-          {
-            target: "clearcomplete",
-          },
-        ],
-      },
-    },
-    update: {
-      invoke: {
-        id: "updatetodo",
-        src: (ctx, event) => updateTodo(ctx, event),
-        onDone: {
-          actions: assign({
-            todos: (ctx, event) => {
-              return (ctx.todos = event.data);
-            },
-          }),
-          target: "initial",
-        },
-      },
-    },
-    change: {
-      invoke: {
-        id: "changetodo",
-        src: (ctx, event) => changeTodo(ctx, event),
-        onDone: {
-          actions: assign({
-            todos: (ctx, event) => {
-              return (ctx.todos = event.data);
-            },
-          }),
-          target: "initial",
-        },
-      },
-    },
-    add: {
-      invoke: {
-        id: "addtodo",
-        src: (ctx, event) => addTodo(ctx, event),
-        onDone: {
-          actions: assign({
-            todos: (ctx, event) => {
-              return (ctx.todos = event.data);
-            },
-          }),
-          target: "initial",
-        },
-      },
-    },
-    all: {},
-    active: {},
-    complete: {},
-    selectall: {
-      invoke: {
-        id: "selectall",
-        src: (ctx, event) => selectAllTodo(ctx, event),
-        onDone: {
-          actions: assign({
-            todos: (ctx, event) => {
-              return (ctx.todos = event.data);
-            },
-          }),
-          target: "initial",
-        },
-      },
-    },
-    clearcomplete: {
-      invoke: {
-        id: "clearcomplete",
-        src: (ctx, event) => clearComple(ctx, event),
-        onDone: {
-          actions: assign({
-            todos: (ctx, event) => {
-              return (ctx.todos = event.data);
-            },
-          }),
-          target: "initial",
-        },
-      },
-    },
-  },
-});
+import { useState, useMemo, useEffect } from "react";
+import { interpret } from "xstate";
 
 export const useMachine = (machine) => {
   const [current, setCurrent] = useState(machine.initialState);
@@ -162,7 +23,7 @@ export const useMachine = (machine) => {
   return [current, service.send];
 };
 
-const updateTodo = (ctx, event) => {
+export const updateTodo = (ctx, event) => {
   const currenttodo = ctx.todos.todo.map((m) => {
     let aux = m;
     if (parseInt(event.todos.todo.id) === m.id) {
@@ -183,7 +44,7 @@ const updateTodo = (ctx, event) => {
   });
 };
 
-const changeTodo = (ctx, event) => {
+export const changeTodo = (ctx, event) => {
   const data = {
     ...ctx.todos,
     formulary: { task: event.todos.formulary.task },
@@ -194,7 +55,7 @@ const changeTodo = (ctx, event) => {
   });
 };
 
-const addTodo = (ctx, event) => {
+export const addTodo = (ctx, event) => {
   const currenttodo = [
     ...ctx.todos.todo,
     {
@@ -215,7 +76,7 @@ const addTodo = (ctx, event) => {
   });
 };
 
-const todoActive = (ctx, event) => {
+export const todoActive = (ctx, event) => {
   const data = {
     ...ctx.todos,
     todo: ctx.todos.todo.filter((f) => !f.complete),
@@ -226,7 +87,7 @@ const todoActive = (ctx, event) => {
   });
 };
 
-const todoAll = (ctx, event) => {
+export const todoAll = (ctx, event) => {
   const data = {
     ...ctx.todos,
     todo: ctx.todos.todo,
@@ -237,7 +98,7 @@ const todoAll = (ctx, event) => {
   });
 };
 
-const todoComplete = (ctx, event) => {
+export const todoComplete = (ctx, event) => {
   const data = {
     ...ctx.todos,
     todo: ctx.todos.todo.filter((f) => f.complete),
@@ -248,7 +109,7 @@ const todoComplete = (ctx, event) => {
   });
 };
 
-const selectAllTodo = (ctx, event) => {
+export const selectAllTodo = (ctx, event) => {
   const alter = ctx.todos.allselected ? false : true;
   const data = {
     ...ctx.todos,
@@ -263,7 +124,7 @@ const selectAllTodo = (ctx, event) => {
   });
 };
 
-const clearComple = (ctx, event) => {
+export const clearComplete = (ctx, event) => {
   const data = {
     ...ctx.todos,
     todo: ctx.todos.todo.reduce((prev, item, i, array) => {
@@ -282,7 +143,26 @@ const clearComple = (ctx, event) => {
   });
 };
 
-export const updatetodo = (machine) => {
+export const deleteTodo = (ctx, event) => {
+  const data = {
+    ...ctx.todos,
+    todo: ctx.todos.todo.reduce((prev, item, i, arr) => {
+      if (arr[i].id !== event.todos.todo.id) {
+        prev.push({
+          ...item,
+        });
+      }
+
+      return prev;
+    }, []),
+  };
+
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+};
+
+export const updatetodoList = (machine) => {
   switch (machine.value) {
     case "active":
       return machine.context.todos.todo.filter((f) => !f.complete);

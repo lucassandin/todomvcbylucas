@@ -1,10 +1,6 @@
 import React from "react";
-import {
-  todoMachine,
-  useMachine,
-  updatetodo,
-  countedItens,
-} from "../../config/machine";
+import { todoMachine } from "../../config/machines";
+import { useMachine, countedItens } from "../../config/machine";
 import Todo from "../todo";
 import "./style.css";
 
