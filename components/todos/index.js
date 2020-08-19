@@ -13,8 +13,6 @@ const Todos = () => {
     setTotal(count.length);
   });
 
-  console.log("State = ", machine.value);
-
   return (
     <div className="todos">
       <form
