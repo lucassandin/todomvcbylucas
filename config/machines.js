@@ -1,4 +1,4 @@
-import { Machine, assign } from "xstate";
+import { Machine, assign, spawn } from "xstate";
 import {
   useMachine,
   updateTodo,
@@ -12,11 +12,12 @@ import {
   deleteTodo,
   updatetodoList,
   countedItens,
-} from "./machine";
-
-export const todosMachine = Machine({});
+  updateTodoTeste,
+  updateTodoAsync,
+} from "./actions";
 
 export const todoMachine = Machine({
+  id: "todo",
   initial: "initial",
   context: {
     todos: {
@@ -87,7 +88,7 @@ export const todoMachine = Machine({
     update: {
       invoke: {
         id: "updatetodo",
-        src: (ctx, event) => updateTodo(ctx, event),
+        src: (ctx, event) => updateTodoAsync(ctx, event),
         onDone: {
           actions: assign({
             todos: (ctx, event) => {
@@ -126,7 +127,136 @@ export const todoMachine = Machine({
         },
       },
     },
-    all: {},
+    all: {
+      invoke: {
+        id: "all",
+        src: (ctx, event) => todoAll(ctx, event),
+        autoForward: true,
+        onDone: {
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+      on: {
+        INITIAL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = updateTodo(ctx, event));
+            },
+          }),
+        },
+        ACTIVE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "active",
+        },
+        COMPLETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const e = todoComplete(ctx, event);
+              return (ctx.todos = e);
+            },
+          }),
+          target: "complete",
+        },
+        CLEAR_COMPLETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                todo: ctx.todos.todo.reduce((prev, item, i, array) => {
+                  if (!array[i].complete) {
+                    prev.push({
+                      ...item,
+                    });
+                  }
+
+                  return prev;
+                }, []),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "initial",
+        },
+        DELETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                todo: ctx.todos.todo.reduce((prev, item, i, arr) => {
+                  if (arr[i].id !== event.todos.todo.id) {
+                    prev.push({
+                      ...item,
+                    });
+                  }
+
+                  return prev;
+                }, []),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "initial",
+        },
+        SELECT_ALL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const alter = ctx.todos.allselected ? false : true;
+              const data = {
+                ...ctx.todos,
+                allselected: alter,
+                todo: ctx.todos.todo.map((m) => {
+                  return { ...m, complete: alter };
+                }),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+        CHANGE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                formulary: { task: event.todos.formulary.task },
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const currenttodo = [
+                ...ctx.todos.todo,
+                {
+                  id: event.todos.todo.id,
+                  value: event.todos.todo.value,
+                  complete: false,
+                },
+              ];
+
+              const data = {
+                ...ctx.todos,
+                formulary: { task: "" },
+                todo: currenttodo,
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+      },
+    },
     active: {
       invoke: {
         id: "active",
@@ -138,11 +268,257 @@ export const todoMachine = Machine({
               return (ctx.todos = event.data);
             },
           }),
+        },
+      },
+      on: {
+        INITIAL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = updateTodo(ctx, event));
+            },
+          }),
+        },
+        COMPLETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const e = todoComplete(ctx, event);
+              return (ctx.todos = e);
+            },
+          }),
+          target: "complete",
+        },
+        ALL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "all",
+        },
+        CLEAR_COMPLETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                todo: ctx.todos.todo.reduce((prev, item, i, array) => {
+                  if (!array[i].complete) {
+                    prev.push({
+                      ...item,
+                    });
+                  }
+
+                  return prev;
+                }, []),
+              };
+              return (ctx.todos = data);
+            },
+          }),
           target: "initial",
+        },
+        DELETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                todo: ctx.todos.todo.reduce((prev, item, i, arr) => {
+                  if (arr[i].id !== event.todos.todo.id) {
+                    prev.push({
+                      ...item,
+                    });
+                  }
+
+                  return prev;
+                }, []),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "initial",
+        },
+        SELECT_ALL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const alter = ctx.todos.allselected ? false : true;
+              const data = {
+                ...ctx.todos,
+                allselected: alter,
+                todo: ctx.todos.todo.map((m) => {
+                  return { ...m, complete: alter };
+                }),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+        CHANGE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                formulary: { task: event.todos.formulary.task },
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const currenttodo = [
+                ...ctx.todos.todo,
+                {
+                  id: event.todos.todo.id,
+                  value: event.todos.todo.value,
+                  complete: false,
+                },
+              ];
+
+              const data = {
+                ...ctx.todos,
+                formulary: { task: "" },
+                todo: currenttodo,
+              };
+              return (ctx.todos = data);
+            },
+          }),
         },
       },
     },
-    complete: {},
+    complete: {
+      invoke: {
+        id: "complete",
+        src: (ctx, event) => todoComplete(ctx, event),
+        autoForward: true,
+        onDone: {
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = event.data);
+            },
+          }),
+        },
+      },
+      on: {
+        INITIAL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              return (ctx.todos = updateTodo(ctx, event));
+            },
+          }),
+        },
+        ACTIVE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "active",
+        },
+        ALL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "all",
+        },
+        CLEAR_COMPLETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                todo: ctx.todos.todo.reduce((prev, item, i, array) => {
+                  if (!array[i].complete) {
+                    prev.push({
+                      ...item,
+                    });
+                  }
+
+                  return prev;
+                }, []),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "initial",
+        },
+        DELETE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                todo: ctx.todos.todo.reduce((prev, item, i, arr) => {
+                  if (arr[i].id !== event.todos.todo.id) {
+                    prev.push({
+                      ...item,
+                    });
+                  }
+
+                  return prev;
+                }, []),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+          target: "initial",
+        },
+        SELECT_ALL: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const alter = ctx.todos.allselected ? false : true;
+              const data = {
+                ...ctx.todos,
+                allselected: alter,
+                todo: ctx.todos.todo.map((m) => {
+                  return { ...m, complete: alter };
+                }),
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+        CHANGE: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const data = {
+                ...ctx.todos,
+                formulary: { task: event.todos.formulary.task },
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            todos: (ctx, event) => {
+              const currenttodo = [
+                ...ctx.todos.todo,
+                {
+                  id: event.todos.todo.id,
+                  value: event.todos.todo.value,
+                  complete: false,
+                },
+              ];
+
+              const data = {
+                ...ctx.todos,
+                formulary: { task: "" },
+                todo: currenttodo,
+              };
+              return (ctx.todos = data);
+            },
+          }),
+        },
+      },
+    },
     selectall: {
       invoke: {
         id: "selectall",

@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { todoMachine } from "../../config/machines";
-import { useMachine, countedItens } from "../../config/machine";
+import { useMachine, countedItens, updatetodoList } from "../../config/actions";
 import Todo from "../todo";
 import "./style.css";
 
 const Todos = () => {
   const [machine, send] = useMachine(todoMachine);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const count = updatetodoList(machine).filter((m) => m.complete);
+    setTotal(count.length);
+  });
 
   console.log("State = ", machine.value);
 
@@ -64,15 +70,15 @@ const Todos = () => {
 
       <div className="buttons">
         <div className="counted">
-          <label>{countedItens(machine)} item left</label>
+          <label>{total} item left</label>
         </div>
-        <button type="button" onClick={() => send({ type: "ALL" })}>
+        <button type="button" onClick={() => send("ALL")}>
           All
         </button>
-        <button type="button" onClick={() => send({ type: "ACTIVE" })}>
+        <button type="button" onClick={() => send("ACTIVE")}>
           Active
         </button>
-        <button type="button" onClick={() => send({ type: "COMPLETE" })}>
+        <button type="button" onClick={() => send("COMPLETE")}>
           Complete
         </button>
         <div className="allCompleted">

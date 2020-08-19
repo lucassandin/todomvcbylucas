@@ -1,5 +1,5 @@
-import React from "react";
-import { updatetodoList } from "../../config/machine";
+import React, { useState, useEffect } from "react";
+import { updatetodoList } from "../../config/actions";
 import "./style.css";
 
 const Todo = ({ machine, send }) => {

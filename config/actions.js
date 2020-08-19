@@ -23,7 +23,7 @@ export const useMachine = (machine) => {
   return [current, service.send];
 };
 
-export const updateTodo = (ctx, event) => {
+export const updateTodoAsync = (ctx, event) => {
   const currenttodo = ctx.todos.todo.map((m) => {
     let aux = m;
     if (parseInt(event.todos.todo.id) === m.id) {
@@ -42,6 +42,25 @@ export const updateTodo = (ctx, event) => {
   return new Promise((resolve, reject) => {
     resolve(data);
   });
+};
+
+export const updateTodo = (ctx, event) => {
+  const currenttodo = ctx.todos.todo.map((m) => {
+    let aux = m;
+    if (parseInt(event.todos.todo.id) === m.id) {
+      if (event.todos.event.target.checked) aux = { ...m, complete: true };
+
+      if (!event.todos.event.target.checked) aux = { ...m, complete: false };
+    }
+    return aux;
+  });
+
+  const data = {
+    ...ctx.todos,
+    todo: currenttodo,
+  };
+
+  return data;
 };
 
 export const changeTodo = (ctx, event) => {
@@ -79,7 +98,6 @@ export const addTodo = (ctx, event) => {
 export const todoActive = (ctx, event) => {
   const data = {
     ...ctx.todos,
-    todo: ctx.todos.todo.filter((f) => !f.complete),
   };
 
   return new Promise((resolve, reject) => {
@@ -101,12 +119,9 @@ export const todoAll = (ctx, event) => {
 export const todoComplete = (ctx, event) => {
   const data = {
     ...ctx.todos,
-    todo: ctx.todos.todo.filter((f) => f.complete),
   };
 
-  return new Promise((resolve, reject) => {
-    resolve(data);
-  });
+  return data;
 };
 
 export const selectAllTodo = (ctx, event) => {
