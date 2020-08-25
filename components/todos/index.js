@@ -6,6 +6,7 @@ import "./style.css";
 
 const Todos = () => {
   const [machine, send] = useMachine(todoMachine);
+  const [todos, setTodos] = useState([]);
   const [total, setTotal] = useState(0);
   const mounted = useRef();
 
@@ -15,6 +16,7 @@ const Todos = () => {
     } else {
       mounted.current = true;
       updatetodoList(machine.value).then((res) => {
+        setTodos(res);
         setTotal(res.filter((m) => !m.complete).length);
       });
     }
@@ -63,7 +65,7 @@ const Todos = () => {
         </label>
       </form>
 
-      <Todo machine={machine} send={send} />
+      <Todo machine={machine} send={send} todos={todos} />
 
       <div className="buttons">
         <div className="counted">

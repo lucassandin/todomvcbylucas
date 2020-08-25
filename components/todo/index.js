@@ -2,21 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { updatetodoList } from "../../config/actions";
 import "./style.css";
 
-const Todo = ({ machine, send }) => {
-  const [todos, setTodos] = useState([]);
-  const mounted = useRef(false);
-
-  useEffect(() => {
-    if (mounted.current) {
-      mounted.current = false;
-    } else {
-      mounted.current = true;
-      updatetodoList(machine.value).then((res) => {
-        setTodos(res);
-      });
-    }
-  });
-
+const Todo = ({ machine, send, todos }) => {
   return (
     <div className="">
       <ul>

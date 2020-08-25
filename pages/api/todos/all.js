@@ -1,8 +1,16 @@
-import { todos } from "../../../static/data";
+var fs = require("fs");
 
-export default (req, res) => {
-  const { data } = todos;
+export default async (req, res) => {
+  var data = await fs.readFileSync("./data/data.json");
+  var todos;
+
+  try {
+    todos = JSON.parse(data);
+  } catch (err) {
+    console.log("There has been an error parsing your JSON.");
+    console.log(err);
+  }
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ data }));
+  res.end(JSON.stringify(todos));
 };
