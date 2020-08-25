@@ -1,4 +1,5 @@
-import { todos, updateTodos } from "../../../data/data";
+// import { todos, updateTodos } from "../../../data/data";
+import { todos, updateTodos } from "../../../public/data";
 
 export default (req, res) => {
   const {
