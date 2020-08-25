@@ -13,7 +13,7 @@ const Todos = () => {
     if (mounted.current) {
       mounted.current = false;
     } else {
-      mounted.current = false;
+      mounted.current = true;
       updatetodoList(machine.value).then((res) => {
         setTotal(res.filter((m) => !m.complete).length);
       });

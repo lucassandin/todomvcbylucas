@@ -10,6 +10,7 @@ const Todo = ({ machine, send }) => {
     if (mounted.current) {
       mounted.current = false;
     } else {
+      mounted.current = true;
       updatetodoList(machine.value).then((res) => {
         setTodos(res);
       });
