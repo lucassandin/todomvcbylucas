@@ -2,6 +2,7 @@
 
 # next.js build output
 .next
+/.next/*
 
 # dependencies
 /node_modules
