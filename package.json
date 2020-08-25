@@ -28,7 +28,7 @@
     "next:start": "next start",
     "next:build": "next build",
     "start": "yarn build:css && next start",
-    "build": "yarn build:css && next build",
+    "build": "yarn build:css && next dev",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
