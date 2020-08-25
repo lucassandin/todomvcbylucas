@@ -12,15 +12,18 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "@zeit/next-css": "^1.0.1",
+    "axios": "^0.20.0",
     "next": "^9.5.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "swr": "^0.3.1",
     "xstate": "^4.11.0"
   },
   "scripts": {
     "build:css": "postcss style/global.css -o style/main.css",
     "next:dev": "yarn build:css && next dev",
+    "dev": "yarn build:css && node server.js",
     "next:start": "next start",
     "next:build": "next build",
     "start": "yarn build:css && next start",

@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { todoMachine } from "../../config/machines";
-import { useMachine, countedItens, updatetodoList } from "../../config/actions";
+import { useMachine, updatetodoList } from "../../config/actions";
 import Todo from "../todo";
 import "./style.css";
 
 const Todos = () => {
   const [machine, send] = useMachine(todoMachine);
   const [total, setTotal] = useState(0);
+  const mounted = useRef();
 
   useEffect(() => {
-    const count = updatetodoList(machine).filter((m) => m.complete);
-    setTotal(count.length);
+    if (mounted.current) {
+      mounted.current = false;
+    } else {
+      mounted.current = false;
+      updatetodoList(machine.value).then((res) => {
+        setTotal(res.filter((m) => !m.complete).length);
+      });
+    }
   });
+
+  console.log("state => ", machine.value);
 
   return (
     <div className="todos">
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const formulary = {
-            type: "ADD",
-            todos: {
-              formulary: { task: machine.context.todos.formulary.task },
-              todo: {
-                id: Math.floor(Math.random() * 1000 + 1),
-                value: machine.context.todos.formulary.task,
-                complete: false,
-              },
-            },
-          };
 
-          send(formulary);
+          send({
+            type: "ADD",
+            task: machine.context.data.task,
+          });
         }}
       >
         <input
@@ -39,13 +40,11 @@ const Todos = () => {
           name="todo"
           placeholder="Task here"
           className="todo"
-          value={machine.context.todos.formulary.task}
+          value={machine.context.data.task}
           onChange={(e) => {
             send({
               type: "CHANGE",
-              todos: {
-                formulary: { task: e.target.value },
-              },
+              task: e.target.value,
             });
           }}
         ></input>

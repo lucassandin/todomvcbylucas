@@ -1,26 +1,28 @@
-import React, { Component } from "react";
-// import Form from "../components/form";
+import React, { useState, useEffect } from "react";
 import Todos from "../components/todos";
 import Footer from "../components/footer";
 import "../style/main.css";
 import "./style.css";
+import axios from "axios";
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+const Home = () => {
+  const [todos, setTodos] = useState();
 
-  render() {
-    return (
-      <div className="">
-        <h1>Todos</h1>
-        <Todos />
+  // const getTodos = () => {
+  //   const data = axios
+  //     .get(`/api/todos`)
+  //     .then((res) => console.log(res))
+  //     .catch((err) => console.log(err));
+  // };
 
-        <Footer />
-      </div>
-    );
-  }
-}
+  return (
+    <div className="">
+      <h1>Todos</h1>
+      <Todos />
+
+      <Footer />
+    </div>
+  );
+};
 
 export default Home;
