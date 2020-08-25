@@ -1,5 +1,4 @@
-// import { todos } from "../../../data/data";
-import { todos } from "../../../public/data";
+import { todos } from "../../../static/data";
 
 export default (req, res) => {
   const { data } = todos;

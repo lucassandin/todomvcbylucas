@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Todos from "../components/todos";
 import Footer from "../components/footer";
 import "../style/main.css";
 import "./style.css";
+import { todos } from "../static/data";
 
 const Home = () => {
   return (
