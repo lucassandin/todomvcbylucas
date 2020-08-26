@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/todos/all.js": {
+    "pages/api/todos/*.js": {
       "memory": 3008,
       "maxDuration": 60
     }

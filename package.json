@@ -24,7 +24,7 @@
   "scripts": {
     "build:css": "postcss style/global.css -o style/main.css",
     "next:dev": "yarn build:css && next dev",
-    "dev": "yarn build:css && node server.js",
+    "dev": "next --port 3000",
     "next:start": "next start",
     "next:build": "next build",
     "start": "yarn build:css && next start",
