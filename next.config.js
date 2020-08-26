@@ -3,3 +3,6 @@ module.exports = withCSS({
   /* config options here */
   // cssModules: true,
 });
+module.exports = {
+  target: "serverless",
+};
