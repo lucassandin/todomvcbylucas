@@ -1,12 +1,8 @@
 const withCSS = require("@zeit/next-css");
-module.exports = withCSS(
-  {
+
+module.exports = {
+  withCSS: withCSS({
     /* config options here */
     // cssModules: true,
-  },
-  {
-    serverRuntimeConfig: {
-      PROJECT_ROOT: __dirname,
-    },
-  }
-);
+  }),
+};

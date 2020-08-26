@@ -5,7 +5,7 @@ export default async (req, res) => {
     query: { id },
   } = req;
 
-  let data = await fs.readFileSync("./data.json");
+  let data = await fs.readFileSync(`.${__dirname}static/data.json`);
   let todos;
 
   try {
@@ -35,7 +35,7 @@ export default async (req, res) => {
 
 // save your data
 const saveFile = (data) => {
-  fs.writeFile("./data.json", data, (err) => {
+  fs.writeFile(`.${__dirname}static/data.json`, data, (err) => {
     if (err) {
       console.log("There has been an error saving your data.");
       console.log(err.message);
