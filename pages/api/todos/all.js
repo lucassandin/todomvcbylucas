@@ -1,8 +1,8 @@
-var fs = require("fs");
+import fs from "fs";
 
 export default async (req, res) => {
-  var data = await fs.readFileSync("./data.json");
-  var todos;
+  const data = await fs.readFileSync(`.${__dirname}data.json`);
+  let todos;
 
   try {
     todos = JSON.parse(data);
