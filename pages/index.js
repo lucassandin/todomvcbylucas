@@ -3,7 +3,6 @@ import Todos from "../components/todos";
 import Footer from "../components/footer";
 import "../style/main.css";
 import "./style.css";
-import { todos } from "../public/data";
 
 const Home = () => {
   return (
