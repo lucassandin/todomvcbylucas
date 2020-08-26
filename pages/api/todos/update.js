@@ -17,7 +17,7 @@ export default async (req, res) => {
 
 // save your data
 const saveFile = (data) => {
-  fs.writeFile("./data/data.json", data, (err) => {
+  fs.writeFile("./static/data.json", data, (err) => {
     if (err) {
       console.log("There has been an error saving your data.");
       console.log(err.message);

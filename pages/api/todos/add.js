@@ -3,7 +3,7 @@ var fs = require("fs");
 export default async (req, res) => {
   const { body } = req;
 
-  let data = await fs.readFileSync("./data/data.json");
+  let data = await fs.readFileSync("./static/data.json");
   let todos;
 
   try {
@@ -35,7 +35,7 @@ export default async (req, res) => {
 
 // save your data
 const saveFile = (data) => {
-  fs.writeFile("./data/data.json", data, (err) => {
+  fs.writeFile("./static/data.json", data, (err) => {
     if (err) {
       console.log("There has been an error saving your data.");
       console.log(err.message);
