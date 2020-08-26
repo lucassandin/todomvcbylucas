@@ -19,7 +19,6 @@ export const todoMachine = Machine({
   initial: "initial",
   context: {
     data: {
-      allselected: false,
       task: "",
     },
   },
@@ -31,17 +30,23 @@ export const todoMachine = Machine({
             target: "update",
           },
         ],
-        CHANGE: [
-          {
-            target: "change",
-          },
-        ],
-        ADD: [
-          {
-            target: "add",
-            cond: (ctx, event) => event.task !== "",
-          },
-        ],
+        CHANGE: {
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
+        },
         ALL: [
           {
             target: "all",
@@ -57,21 +62,15 @@ export const todoMachine = Machine({
             target: "complete",
           },
         ],
-        SELECT_ALL: [
-          {
-            target: "selectall",
-          },
-        ],
-        CLEAR_COMPLETE: [
-          {
-            target: "clearcomplete",
-          },
-        ],
-        DELETE: [
-          {
-            target: "delete",
-          },
-        ],
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
+        CLEAR_COMPLETE: {
+          actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
+        },
+        DELETE: {
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
+        },
       },
     },
     update: {
@@ -79,32 +78,6 @@ export const todoMachine = Machine({
         id: "updatetodo",
         src: async (ctx, event) => await updateTodoAsync(ctx, event),
         onDone: {
-          target: "initial",
-        },
-      },
-    },
-    change: {
-      invoke: {
-        id: "changetodo",
-        src: (ctx, event) => changeTodo(ctx, event),
-        onDone: {
-          actions: assign({
-            data: (ctx, event) => {
-              return (ctx.data = { ...ctx.data, task: event.data.task });
-            },
-          }),
-          target: "initial",
-        },
-      },
-    },
-    add: {
-      invoke: {
-        id: "addtodo",
-        src: async (ctx, event) => await addTodoAsync(ctx, event),
-        onDone: {
-          actions: assign({
-            data: (ctx, event) => (ctx.data = { ...ctx.data, task: "" }),
-          }),
           target: "initial",
         },
       },
@@ -120,20 +93,31 @@ export const todoMachine = Machine({
         COMPLETE: {
           target: "complete",
         },
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
         CLEAR_COMPLETE: {
           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
         },
         DELETE: {
-          target: "delete",
-        },
-        SELECT_ALL: {
-          target: "selectall",
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
         },
         CHANGE: {
-          target: "change",
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
         },
         ADD: {
-          target: "add",
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
         },
       },
     },
@@ -149,20 +133,31 @@ export const todoMachine = Machine({
         COMPLETE: {
           target: "complete",
         },
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
         CLEAR_COMPLETE: {
           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
         },
         DELETE: {
-          target: "delete",
-        },
-        SELECT_ALL: {
-          target: "selectall",
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
         },
         CHANGE: {
-          target: "change",
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
         },
         ADD: {
-          target: "add",
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
         },
         ALL: {
           target: "all",
@@ -184,81 +179,34 @@ export const todoMachine = Machine({
         COMPLETE: {
           target: "complete",
         },
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
         CLEAR_COMPLETE: {
           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
         },
         DELETE: {
-          target: "delete",
-        },
-        SELECT_ALL: {
-          target: "selectall",
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
         },
         CHANGE: {
-          target: "change",
-        },
-        ADD: {
-          target: "add",
-        },
-        ALL: {
-          target: "all",
-        },
-      },
-    },
-    selectall: {
-      invoke: {
-        id: "selectall",
-        src: async (ctx, event) => await selectAllTodoAsync(ctx, event),
-        onDone: {
           actions: assign({
-            allselected: (ctx, event) => {
-              return ctx.allselected ? false : true;
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
             },
           }),
-          target: "initial",
-        },
-      },
-    },
-    clearcomplete: {
-      invoke: {
-        id: "clearcomplete",
-        src: async (ctx, event) => await clearCompleteAsync(ctx, event),
-        onDone: {
-          target: "initial",
-        },
-      },
-      on: {
-        ACTIVE: {
-          target: "active",
-        },
-        COMPLETE: {
-          target: "complete",
-        },
-        CLEAR_COMPLETE: {
-          target: "clearcomplete",
-        },
-        DELETE: {
-          target: "delete",
-        },
-        SELECT_ALL: {
-          target: "selectall",
-        },
-        CHANGE: {
-          target: "change",
         },
         ADD: {
-          target: "add",
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
         },
         ALL: {
           target: "all",
-        },
-      },
-    },
-    delete: {
-      invoke: {
-        id: "delete",
-        src: async (ctx, event) => await deleteTodoAsync(ctx, event),
-        onDone: {
-          target: "initial",
         },
       },
     },

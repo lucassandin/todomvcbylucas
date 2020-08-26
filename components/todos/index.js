@@ -56,7 +56,12 @@ const Todos = () => {
             });
           }}
         ></input>
-        <label onClick={() => send({ type: "SELECT_ALL" })}>
+        <label
+          onClick={() => {
+            send({ type: "SELECT_ALL" });
+            handleOnChange();
+          }}
+        >
           <svg
             viewBox="0 0 20 20"
             fill="currentColor"
