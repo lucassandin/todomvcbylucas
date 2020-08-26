@@ -138,12 +138,13 @@ export const todoMachine = Machine({
       },
     },
     active: {
+      invoke: {
+        id: "active",
+        src: async (ctx, event) => await updateTodoAsync(ctx, event),
+      },
       on: {
         INITIAL: {
           actions: async (ctx, event) => await updateTodoAsync(ctx, event),
-        },
-        ACTIVE: {
-          target: "active",
         },
         COMPLETE: {
           target: "complete",
@@ -169,6 +170,10 @@ export const todoMachine = Machine({
       },
     },
     complete: {
+      invoke: {
+        id: "complete",
+        src: async (ctx, event) => await updateTodoAsync(ctx, event),
+      },
       on: {
         INITIAL: {
           actions: async (ctx, event) => await updateTodoAsync(ctx, event),

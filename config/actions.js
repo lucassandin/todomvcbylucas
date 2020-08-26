@@ -43,6 +43,8 @@ export const updateTodoAsync = async (ctx, event) => {
   });
 
   const update = await axios.put("/api/todos/update", { todos: data });
+
+  return update;
 };
 
 export const updateTodo = (ctx, event) => {
@@ -74,7 +76,7 @@ export const changeTodo = (ctx, event) => {
 
 // implemented with api
 export const addTodoAsync = async (ctx, event) => {
-  await axios.post("/api/todos/add", { task: event.task });
+  const result = await axios.post("/api/todos/add", { task: event.task });
 };
 
 export const todoActive = (ctx, event) => {
@@ -133,6 +135,8 @@ export const clearCompleteAsync = async (ctx, event) => {
   }, []);
 
   const update = await axios.put("/api/todos/update", { todos: data });
+
+  return update;
 };
 
 // implemented with api
@@ -142,18 +146,20 @@ export const deleteTodoAsync = async (ctx, event) => {
 
 // implemented with api
 export const updatetodoList = async (state) => {
-  const { data } = await axios.get("/api/todos/all");
+  const {
+    data: { data },
+  } = await axios.get("/api/todos/all");
 
   switch (state) {
     case "active":
-      return data.data.todos.filter((f) => !f.complete);
+      return data.todos.filter((f) => !f.complete);
     case "complete":
-      return data.data.todos.filter((f) => f.complete);
+      return data.todos.filter((f) => f.complete);
     case "initial":
-      return data.data.todos;
+      return data.todos;
     case "clearcomplete":
-      return data.data.todos.filter((f) => f.complete);
+      return data.todos.filter((f) => !f.complete);
     default:
-      return data.data.todos;
+      return data.todos;
   }
 };

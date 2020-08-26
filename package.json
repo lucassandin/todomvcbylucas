@@ -27,8 +27,9 @@
     "dev": "next --port 3000",
     "next:start": "next start",
     "next:build": "next build",
-    "start": "yarn build:css && next start",
+    "start": "yarn build:css && next build && next start",
     "build": "yarn build:css && next build",
+    "heroku-postbuild": "npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -22,6 +22,12 @@ const Todos = () => {
     }
   });
 
+  const handleOnChange = () => {
+    updatetodoList(machine.value).then((res) => {
+      setTodos(res);
+    });
+  };
+
   console.log("state => ", machine.value);
 
   return (
@@ -65,7 +71,12 @@ const Todos = () => {
         </label>
       </form>
 
-      <Todo machine={machine} send={send} todos={todos} />
+      <Todo
+        machine={machine}
+        send={send}
+        todos={todos}
+        handleOnChange={handleOnChange}
+      />
 
       <div className="buttons">
         <div className="counted">
@@ -83,7 +94,10 @@ const Todos = () => {
         <div className="allCompleted">
           <button
             type="button"
-            onClick={() => send({ type: "CLEAR_COMPLETE" })}
+            onClick={() => {
+              send({ type: "CLEAR_COMPLETE" });
+              handleOnChange();
+            }}
           >
             Clear completed
           </button>

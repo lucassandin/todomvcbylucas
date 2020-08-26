@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { updatetodoList } from "../../config/actions";
 import "./style.css";
 
-const Todo = ({ machine, send, todos }) => {
+const Todo = ({ machine, send, todos, handleOnChange }) => {
   return (
     <div className="">
       <ul>
@@ -14,12 +14,14 @@ const Todo = ({ machine, send, todos }) => {
               name="register"
               value={t.value}
               onChange={(e) => {
+                console.log("change CLICKED");
                 send({
                   type: "INITIAL",
                   task: machine.context.data.task,
                   id: t.id,
                   checked: e.target.checked,
                 });
+                handleOnChange();
               }}
               checked={t.complete}
             />
