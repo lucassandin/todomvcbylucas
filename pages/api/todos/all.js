@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 export default async (req, res) => {
-  var data = await fs.readFileSync("./static/data.json");
+  var data = await fs.readFileSync("/public/data.json");
   var todos;
 
   try {
