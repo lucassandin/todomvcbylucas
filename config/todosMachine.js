@@ -1,21 +1,15 @@
 import { Machine, assign, spawn } from "xstate";
-import axios from "axios";
 import {
-  updateTodo,
-  changeTodo,
   addTodoAsync,
-  todoActive,
-  todoAll,
-  todoComplete,
   selectAllTodoAsync,
   clearCompleteAsync,
   deleteTodoAsync,
   updateTodoAsync,
-  getTodosAsync,
 } from "./actions";
 
-export const todoMachine = Machine({
-  id: "todo",
+// todos
+export const todosMachine = Machine({
+  id: "todos",
   initial: "initial",
   context: {
     data: {

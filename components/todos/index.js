@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { todoMachine } from "../../config/machines";
+import { todosMachine } from "../../config/todosMachine";
 import { useMachine, updatetodoList } from "../../config/actions";
 import Todo from "../todo";
 import "./style.css";
 
 const Todos = () => {
-  const [machine, send] = useMachine(todoMachine);
+  const [machine, send] = useMachine(todosMachine);
   const [todos, setTodos] = useState([]);
   const [total, setTotal] = useState(0);
   const mounted = useRef();
@@ -96,6 +96,7 @@ const Todos = () => {
         <button type="button" onClick={() => send("COMPLETE")}>
           Complete
         </button>
+
         <div className="allCompleted">
           <button
             type="button"
