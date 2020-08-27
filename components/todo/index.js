@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { updatetodoList } from "../../config/actions";
+import React from "react";
 import "./style.css";
 
 const Todo = ({ machine, send, todos, handleOnChange }) => {
