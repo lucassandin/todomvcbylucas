@@ -2,28 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { interpret, spawn } from "xstate";
 import axios from "axios";
 
-export const useMachine = (machine) => {
-  const [current, setCurrent] = useState(machine.initialState);
-
-  const service = useMemo(
-    () =>
-      interpret(machine)
-        .onTransition((state) => {
-          if (state.changed) {
-            setCurrent(state);
-          }
-        })
-        .start(),
-    []
-  );
-
-  useEffect(() => {
-    return () => service.stop();
-  }, []);
-
-  return [current, service.send];
-};
-
 // implemented with api
 export const updateTodoAsync = async (ctx, event) => {
   const result = await (await axios.get("/api/todos/all")).data.data.todos;

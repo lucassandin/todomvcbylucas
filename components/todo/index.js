@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useService } from "@xstate/react";
 import "./style.css";
 
-const Todo = ({ machine, send, todos, handleOnChange }) => {
+const Todo = ({ machine }) => {
+  // parent machine
+  const [parentState, parentTransition, parentInterpreter] = machine;
+  // current machine
+  const [state, transition, interpreter] = useService(
+    parentInterpreter.children.get("todo")
+  );
+
+  // useEffect(() => {
+  //   interpreter
+  //     .onTransition((state) => console.log("Todo TRANSITION", state))
+  //     .onEvent((event) => console.log("Todo EVENT", event));
+  // }, [interpreter]);
+
+  const { todos } = state.context;
+
+  console.log(todos);
+
   return (
     <div className="">
       <ul>
@@ -12,16 +30,6 @@ const Todo = ({ machine, send, todos, handleOnChange }) => {
               id={t.id}
               name="register"
               value={t.value}
-              onChange={(e) => {
-                console.log("change CLICKED");
-                send({
-                  type: "INITIAL",
-                  task: machine.context.data.task,
-                  id: t.id,
-                  checked: e.target.checked,
-                });
-                handleOnChange();
-              }}
               checked={t.complete}
             />
             <label>{t.value}</label>
@@ -29,12 +37,6 @@ const Todo = ({ machine, send, todos, handleOnChange }) => {
               viewBox="0 0 20 20"
               fill="currentColor"
               className="x w-6 h-6 trash"
-              onClick={() =>
-                send({
-                  type: "DELETE",
-                  id: t.id,
-                })
-              }
             >
               <path
                 fillRule="evenodd"
