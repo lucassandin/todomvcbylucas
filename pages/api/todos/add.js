@@ -4,7 +4,7 @@ export default async (req, res) => {
   const { body } = req;
 
   let data = await fs.readFileSync(`.${__dirname}static/data.json`);
-  let todos;
+  let todos = "";
 
   try {
     todos = JSON.parse(data);
@@ -14,16 +14,14 @@ export default async (req, res) => {
   }
 
   todos = {
-    data: {
-      todos: [
-        ...todos.data.todos,
-        {
-          id: Math.floor(Math.random() * 1000 + 1),
-          value: body.task,
-          complete: false,
-        },
-      ],
-    },
+    todos: [
+      ...todos.todos,
+      {
+        id: Math.floor(Math.random() * 1000 + 1),
+        value: body.task,
+        complete: false,
+      },
+    ],
   };
 
   saveFile(JSON.stringify(todos));

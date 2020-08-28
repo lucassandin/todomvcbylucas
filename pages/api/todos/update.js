@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 export default async (req, res) => {
-  const todos = { data: { todos: req.body.todos } };
+  const todos = { todos: req.body.todos };
 
   try {
     saveFile(JSON.stringify(todos));

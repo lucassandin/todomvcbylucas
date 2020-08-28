@@ -15,11 +15,9 @@ export default async (req, res) => {
     console.log(err);
   }
 
-  if (todos.data.todos.find((f) => f.id === parseInt(id))) {
+  if (todos.todos.find((f) => f.id === parseInt(id))) {
     todos = {
-      data: {
-        todos: todos.data.todos.filter((f) => f.id !== parseInt(id)),
-      },
+      todos: todos.todos.filter((f) => f.id !== parseInt(id)),
     };
 
     saveFile(JSON.stringify(todos));

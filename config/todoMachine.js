@@ -1,16 +1,32 @@
 import { Machine, assign, spawn } from "xstate";
 import { deleteTodoAsync, updateTodoAsync } from "./actions";
+import axios from "axios";
+import { todosMachine } from "./todosMachine";
 
 export const todoMachine = Machine({
   id: "todo",
-  initial: "idle",
+  initial: "initial",
   context: {
-    todos: [
-      { id: 1, value: "asdasdasd", complete: false },
-      { id: 2, value: "asdasdasd", complete: false },
-    ],
+    todos: [],
+    todosRef: undefined,
   },
   states: {
+    initial: {
+      invoke: {
+        id: "todo_initial",
+        src: async (ctx) => await axios.get("/api/todos/all"),
+        onDone: {
+          actions: [
+            assign({
+              todos: (ctx, event) => {
+                return event.data.data.todos;
+              },
+            }),
+          ],
+          target: "idle",
+        },
+      },
+    },
     idle: {
       on: {
         ADD: {

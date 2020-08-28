@@ -24,10 +24,7 @@ export const todosMachine = Machine({
         id: "todo",
         src: todoMachine,
         data: {
-          todos: [
-            { id: 1, value: "task 1", complete: false },
-            { id: 2, value: "task 2", complete: false },
-          ],
+          todos: [],
         },
         onDone: {
           target: "idle",

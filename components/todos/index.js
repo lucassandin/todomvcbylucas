@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { todosMachine } from "../../config/todosMachine";
 import { updatetodoList } from "../../config/actions";
-import { useMachine } from "@xstate/react";
+import { useMachine, useService } from "@xstate/react";
 import Todo from "../todo";
 import "./style.css";
 
@@ -10,12 +10,8 @@ const Todos = () => {
   const [state, transition, interpreter] = machine;
 
   useEffect(() => {
-    // interpreter
-    //   .onTransition((state) => console.log("Todos TRANSITION", state))
-    //   .onEvent((event) => console.log("Todos EVENT", event));
-
     transition("INIT", {});
-  }, [interpreter, transition]);
+  }, [transition]);
 
   return (
     <div className="todos">

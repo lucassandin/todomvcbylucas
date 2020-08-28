@@ -1,11 +1,10 @@
 import fs from "fs";
 
 export default async (req, res) => {
-  const data = await fs.readFileSync(`.${__dirname}static/data.json`);
-  let todos;
+  let todos = await fs.readFileSync(`.${__dirname}static/data.json`);
 
   try {
-    todos = JSON.parse(data);
+    todos = JSON.parse(todos);
   } catch (err) {
     console.log("There has been an error parsing your JSON.");
     console.log(err);

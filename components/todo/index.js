@@ -10,15 +10,9 @@ const Todo = ({ machine }) => {
     parentInterpreter.children.get("todo")
   );
 
-  // useEffect(() => {
-  //   interpreter
-  //     .onTransition((state) => console.log("Todo TRANSITION", state))
-  //     .onEvent((event) => console.log("Todo EVENT", event));
-  // }, [interpreter]);
-
   const { todos } = state.context;
 
-  console.log(todos);
+  console.log(parentState, state);
 
   return (
     <div className="">
