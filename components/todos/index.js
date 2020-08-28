@@ -1,27 +1,45 @@
 import React, { useState, useEffect, useRef } from "react";
 import { todosMachine } from "../../config/todosMachine";
-import { updatetodoList } from "../../config/actions";
-import { useMachine } from "@xstate/react";
+import { useMachine, updatetodoList } from "../../config/actions";
 import Todo from "../todo";
 import "./style.css";
 
 const Todos = () => {
-  const machine = useMachine(todosMachine);
-  const [state, transition, interpreter] = machine;
+  const [machine, send] = useMachine(todosMachine);
+  const [todos, setTodos] = useState([]);
+  const [total, setTotal] = useState(0);
+  const mounted = useRef();
 
   useEffect(() => {
-    // interpreter
-    //   .onTransition((state) => console.log("Todos TRANSITION", state))
-    //   .onEvent((event) => console.log("Todos EVENT", event));
+    if (mounted.current) {
+      mounted.current = false;
+    } else {
+      mounted.current = true;
+      updatetodoList(machine.value).then((res) => {
+        setTodos(res);
+        setTotal(res.filter((m) => !m.complete).length);
+      });
+    }
+  });
 
-    transition("INIT", {});
-  }, [interpreter, transition]);
+  const handleOnChange = () => {
+    updatetodoList(machine.value).then((res) => {
+      setTodos(res);
+    });
+  };
+
+  console.log(machine.context);
 
   return (
     <div className="todos">
       <form
         onSubmit={(e) => {
           e.preventDefault();
+
+          send({
+            type: "ADD",
+            task: machine.context.data.task,
+          });
         }}
       >
         <input
@@ -30,9 +48,20 @@ const Todos = () => {
           name="todo"
           placeholder="Task here"
           className="todo"
-          onChange={(e) => {}}
+          value={machine.context.data.task}
+          onChange={(e) => {
+            send({
+              type: "CHANGE",
+              task: e.target.value,
+            });
+          }}
         ></input>
-        <label onClick={() => {}}>
+        <label
+          onClick={() => {
+            send({ type: "SELECT_ALL" });
+            handleOnChange();
+          }}
+        >
           <svg
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -47,18 +76,36 @@ const Todos = () => {
         </label>
       </form>
 
-      {state.matches("todo") && <Todo machine={machine} />}
+      <Todo
+        machine={machine}
+        send={send}
+        todos={todos}
+        handleOnChange={handleOnChange}
+      />
 
       <div className="buttons">
         <div className="counted">
-          <label> item left</label>
+          <label>{total} item left</label>
         </div>
-        <button type="button">All</button>
-        <button type="button">Active</button>
-        <button type="button">Complete</button>
-
+        <button type="button" onClick={() => send("ALL")}>
+          All
+        </button>
+        <button type="button" onClick={() => send("ACTIVE")}>
+          Active
+        </button>
+        <button type="button" onClick={() => send("COMPLETE")}>
+          Complete
+        </button>
         <div className="allCompleted">
-          <button type="button">Clear completed</button>
+          <button
+            type="button"
+            onClick={() => {
+              send({ type: "CLEAR_COMPLETE" });
+              handleOnChange();
+            }}
+          >
+            Clear completed
+          </button>
         </div>
       </div>
     </div>

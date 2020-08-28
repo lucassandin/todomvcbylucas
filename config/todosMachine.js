@@ -1,168 +1,169 @@
 import { Machine, assign, spawn } from "xstate";
-import { todoMachine } from "./todoMachine";
 import {
   addTodoAsync,
   selectAllTodoAsync,
   clearCompleteAsync,
+  updateTodoAsync,
+  deleteTodoAsync,
 } from "./actions";
 
+// todos
 export const todosMachine = Machine({
   id: "todos",
   initial: "idle",
   context: {
-    task: "",
-    todo: {},
+    all: false,
+    data: {
+      task: "",
+    },
   },
   states: {
     idle: {
       on: {
-        INIT: "todo",
+        CHANGE: {
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        SELECT_ALL: {
+          actions: assign({
+            all: async (ctx, event) => {
+              let alter = await selectAllTodoAsync(ctx, event);
+
+              return alter;
+            },
+          }),
+        },
+        CLEAR_COMPLETE: {
+          actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
+        },
+        CHECK: {
+          actions: async (ctx, event) => await updateTodoAsync(ctx, event),
+        },
+        DELETE: {
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
+        },
+        ALL: "all",
+        ACTIVE: "active",
+        COMPLETE: "complete",
       },
     },
-    todo: {
-      invoke: {
-        id: "todo",
-        src: todoMachine,
-        data: {
-          todos: [
-            { id: 1, value: "task 1", complete: false },
-            { id: 2, value: "task 2", complete: false },
-          ],
+    all: {
+      on: {
+        CHANGE: {
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
         },
-        onDone: {
-          target: "idle",
+        ADD: {
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
         },
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
+        CLEAR_COMPLETE: {
+          actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
+        },
+        CHECK: {
+          actions: async (ctx, event) => await updateTodoAsync(ctx, event),
+        },
+        DELETE: {
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
+        },
+        ACTIVE: "active",
+        COMPLETE: "complete",
+      },
+    },
+    active: {
+      on: {
+        CHANGE: {
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
+        CLEAR_COMPLETE: {
+          actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
+        },
+        CHECK: {
+          actions: async (ctx, event) => await updateTodoAsync(ctx, event),
+        },
+        DELETE: {
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
+        },
+        ALL: "all",
+        COMPLETE: "complete",
+      },
+    },
+    complete: {
+      on: {
+        CHANGE: {
+          actions: assign({
+            data: (ctx, event) => {
+              const obj = { ...ctx.data, task: event.task };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        ADD: {
+          actions: assign({
+            data: (ctx, event) => {
+              addTodoAsync(ctx, event).then();
+              const obj = { ...ctx.data, task: "" };
+              return (ctx.data = obj);
+            },
+          }),
+        },
+        SELECT_ALL: {
+          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+        },
+        CLEAR_COMPLETE: {
+          actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
+        },
+        CHECK: {
+          actions: async (ctx, event) => await updateTodoAsync(ctx, event),
+        },
+        DELETE: {
+          actions: async (ctx, event) => await deleteTodoAsync(ctx, event),
+        },
+        ALL: "all",
+        ACTIVE: "active",
       },
     },
   },
 });
-
-// todos
-// export const todosMachine = Machine({
-//   id: "todos",
-//   initial: "idle",
-//   context: {
-//     data: {
-//       task: "",
-//     },
-//   },
-//   states: {
-//     idle: {
-//       on: {
-//         CHANGE: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               const obj = { ...ctx.data, task: event.task };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         ADD: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               addTodoAsync(ctx, event).then();
-//               const obj = { ...ctx.data, task: "" };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         SELECT_ALL: {
-//           actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
-//         },
-//         CLEAR_COMPLETE: {
-//           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
-//         },
-//         ALL: "all",
-//         ACTIVE: "active",
-//         COMPLETE: "complete",
-//       },
-//     },
-//     all: {
-//       on: {
-//         CHANGE: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               const obj = { ...ctx.data, task: event.task };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         ADD: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               addTodoAsync(ctx, event).then();
-//               const obj = { ...ctx.data, task: "" };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         SELECT_ALL: {
-//           actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
-//         },
-//         CLEAR_COMPLETE: {
-//           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
-//         },
-//         ACTIVE: "active",
-//         COMPLETE: "complete",
-//       },
-//     },
-//     active: {
-//       on: {
-//         CHANGE: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               const obj = { ...ctx.data, task: event.task };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         ADD: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               addTodoAsync(ctx, event).then();
-//               const obj = { ...ctx.data, task: "" };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         SELECT_ALL: {
-//           actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
-//         },
-//         CLEAR_COMPLETE: {
-//           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
-//         },
-//         ALL: "all",
-//         COMPLETE: "complete",
-//       },
-//     },
-//     complete: {
-//       on: {
-//         CHANGE: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               const obj = { ...ctx.data, task: event.task };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         ADD: {
-//           actions: assign({
-//             data: (ctx, event) => {
-//               addTodoAsync(ctx, event).then();
-//               const obj = { ...ctx.data, task: "" };
-//               return (ctx.data = obj);
-//             },
-//           }),
-//         },
-//         SELECT_ALL: {
-//           actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
-//         },
-//         CLEAR_COMPLETE: {
-//           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
-//         },
-//         ALL: "all",
-//         ACTIVE: "active",
-//       },
-//     },
-//   },
-// });

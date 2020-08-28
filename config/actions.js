@@ -2,6 +2,28 @@ import { useState, useMemo, useEffect } from "react";
 import { interpret, spawn } from "xstate";
 import axios from "axios";
 
+export const useMachine = (machine) => {
+  const [current, setCurrent] = useState(machine.initialState);
+
+  const service = useMemo(
+    () =>
+      interpret(machine)
+        .onTransition((state) => {
+          if (state.changed) {
+            setCurrent(state);
+          }
+        })
+        .start(),
+    []
+  );
+
+  useEffect(() => {
+    return () => service.stop();
+  }, []);
+
+  return [current, service.send];
+};
+
 // implemented with api
 export const updateTodoAsync = async (ctx, event) => {
   const result = await (await axios.get("/api/todos/all")).data.data.todos;
@@ -30,15 +52,19 @@ export const addTodoAsync = async (ctx, event) => {
 export const selectAllTodoAsync = async (ctx, event) => {
   const result = await (await axios.get("/api/todos/all")).data.data.todos;
 
+  const alter = ctx.all ? false : true;
   const data = result.map((m) => {
-    if (m.complete) {
-      m.complete = false;
-    } else {
-      m.complete = true;
-    }
+    // if (m.complete) {
+    //   m.complete = false;
+    // } else {
+    //   m.complete = true;
+    // }
+    m.complete = alter;
     return m;
   });
   const update = await axios.put("/api/todos/update", { todos: data });
+
+  return alter;
 };
 
 // implemented with api
