@@ -28,7 +28,7 @@
     "dev": "next --port 3000",
     "next:start": "next start",
     "next:build": "next build",
-    "start": "npm run build:css && next build && next start -p $PORT",
+    "start": "next start -p $PORT",
     "build": "next build",
     "heroku-postbuild": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
