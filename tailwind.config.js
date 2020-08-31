@@ -4,4 +4,7 @@ module.exports = {
       center: true,
     },
   },
+  future: {
+    removeDeprecatedGapUtilities: true,
+  },
 };

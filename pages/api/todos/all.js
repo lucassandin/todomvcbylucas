@@ -7,8 +7,8 @@ export default async (req, res) => {
   try {
     todos = JSON.parse(data);
   } catch (err) {
-    console.log("There has been an error parsing your JSON.");
     console.log(err);
+    return {};
   }
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");

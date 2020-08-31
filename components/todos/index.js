@@ -28,8 +28,6 @@ const Todos = () => {
     });
   };
 
-  console.log(machine.context);
-
   return (
     <div className="todos">
       <form
@@ -59,7 +57,9 @@ const Todos = () => {
         <label
           onClick={() => {
             send({ type: "SELECT_ALL" });
-            handleOnChange();
+            setTimeout(() => {
+              handleOnChange();
+            }, 0);
           }}
         >
           <svg

@@ -39,10 +39,9 @@ export const todosMachine = Machine({
         },
         SELECT_ALL: {
           actions: assign({
-            all: async (ctx, event) => {
-              let alter = await selectAllTodoAsync(ctx, event);
-
-              return alter;
+            all: (ctx, event) => {
+              selectAllTodoAsync(ctx, event).then();
+              return ctx.all ? false : true;
             },
           }),
         },
@@ -80,7 +79,12 @@ export const todosMachine = Machine({
           }),
         },
         SELECT_ALL: {
-          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+          actions: assign({
+            all: (ctx, event) => {
+              selectAllTodoAsync(ctx, event).then();
+              return ctx.all ? false : true;
+            },
+          }),
         },
         CLEAR_COMPLETE: {
           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
@@ -115,7 +119,12 @@ export const todosMachine = Machine({
           }),
         },
         SELECT_ALL: {
-          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+          actions: assign({
+            all: (ctx, event) => {
+              selectAllTodoAsync(ctx, event).then();
+              return ctx.all ? false : true;
+            },
+          }),
         },
         CLEAR_COMPLETE: {
           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),
@@ -150,7 +159,12 @@ export const todosMachine = Machine({
           }),
         },
         SELECT_ALL: {
-          actions: async (ctx, event) => await selectAllTodoAsync(ctx, event),
+          actions: assign({
+            all: (ctx, event) => {
+              selectAllTodoAsync(ctx, event).then();
+              return ctx.all ? false : true;
+            },
+          }),
         },
         CLEAR_COMPLETE: {
           actions: async (ctx, event) => await clearCompleteAsync(ctx, event),

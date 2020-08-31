@@ -54,17 +54,10 @@ export const selectAllTodoAsync = async (ctx, event) => {
 
   const alter = ctx.all ? false : true;
   const data = result.map((m) => {
-    // if (m.complete) {
-    //   m.complete = false;
-    // } else {
-    //   m.complete = true;
-    // }
     m.complete = alter;
     return m;
   });
   const update = await axios.put("/api/todos/update", { todos: data });
-
-  return alter;
 };
 
 // implemented with api

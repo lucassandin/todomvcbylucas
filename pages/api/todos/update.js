@@ -3,6 +3,8 @@ var fs = require("fs");
 export default async (req, res) => {
   const todos = { data: { todos: req.body.todos } };
 
+  console.log(req.body);
+
   try {
     saveFile(JSON.stringify(todos));
   } catch (err) {

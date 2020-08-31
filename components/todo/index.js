@@ -28,12 +28,13 @@ const Todo = ({ machine, send, todos, handleOnChange }) => {
               viewBox="0 0 20 20"
               fill="currentColor"
               className="x w-6 h-6 trash"
-              onClick={() =>
+              onClick={() => {
                 send({
                   type: "DELETE",
                   id: t.id,
-                })
-              }
+                });
+                handleOnChange();
+              }}
             >
               <path
                 fillRule="evenodd"
